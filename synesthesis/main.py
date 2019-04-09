@@ -2,18 +2,15 @@
 
 import argparse
 from synesthesis.utils import load_image_file
-from synesthesis.math import create_power_spectrum
 from synesthesis.sound import play_sound, save_sound
 
-def main(image_file_loc, outfile):
+def main(image_file_loc, duration, outfile):
     image = load_image_file(image_file_loc)
 
-    power_spectrum = create_power_spectrum(image)
-
-    if isinstance(outfile, NoOutfile()):
-        play_sound(power_spectrum)
+    if isinstance(outfile, NoOutfile):
+        play_sound(image, duration)
     else:
-        save_sound(power_spectrum, outfile)
+        save_sound(image, duration, outfile)
 
 class NoOutfile():
     pass
@@ -21,7 +18,8 @@ class NoOutfile():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('image_file_loc', help='location of image file')
+    parser.add_argument('duration', help='duration in seconds of the sound', type=int)
     parser.add_argument('-o', '--outfile', help='file to save sound to', default=NoOutfile())
     args = parser.parse_args()
 
-    main(image, outfile)
+    main(args.image_file_loc, args.duration, args.outfile)
