@@ -1,5 +1,6 @@
 # synesthesis
-_synes_thesia + syn_thesis_
+*synes*thesia + syn*thesis*
+
 Converts images to sound files with the sound power spectrum given by the image
 
 ## Basics
@@ -9,6 +10,7 @@ Right now the math is about as basic as it gets. Ideally I would like to clean u
 
 ## Dependencies
 `synesthesis` is written in Python 3, tested on version 3.7, and has several package dependencies:
+
 - numpy
 - scipy
 - imageio
@@ -19,14 +21,18 @@ Indeed, much of the meat of this program is handled in these dependencies.
 
 ## Installation
 The easiest way to install is with `pip`, by running
+
 ```pip install -e .```
+
 in the directory containing `setup.py`. Alternatively you can run `setup.py` manually via
+
 ```python setup.py develop```
 
 I highly recommend using either the `pip` `-e` flag (`--editable`), or installing with the `develop` option, as you can then pull new versions of the code without needing to reinstall.
 
 ## Usage
 You can now run `synesthesis` via
+
 ```synesthesis [filename] [duration] [-i] [-o OUTFILE]```
 
 `filename` is the input image location, and `duration` is the length of the sound you want to create. The `-i` flag inverts the brightness levels in the image optionally, and the `-o` optional argument takes an output file name (e.g. `output.wav`), redirecting the sound to a file instead of playing it.
