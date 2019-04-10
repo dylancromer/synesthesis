@@ -5,6 +5,15 @@ import scipy.signal as sig
 from scipy.io import wavfile
 
 def _calc_sound_and_framerate(image, duration):
+    """Calculate the sound produced by the image, using an inverse short-time Fourier transform (ISTFT).
+
+    Arguments:
+    image -- array of image brightness values (2d numpy.ndarray)
+    duration -- duration in seconds of the sound (float)
+
+    returns tuple of ISTFT of image (np.ndarray), and framerate (float)
+    """
+
     framerate = image.size/duration
 
     if image.shape[0] != image.shape[1]:
@@ -19,15 +28,26 @@ def _calc_sound_and_framerate(image, duration):
     return image_stft,framerate
 
 def play_sound(image, duration):
-    image_inverted = 255 - image
+    """Plays sound from image.
 
-    image_sound,framerate = _calc_sound_and_framerate(image_inverted, duration)
+    Arguments:
+    image -- array of image brightness values (2d numpy.ndarray)
+    duration -- duration in seconds of the sound (float)
+    """
 
-    print("Playing sound")
+    image_sound,framerate = _calc_sound_and_framerate(image, duration)
+
     sd.play(image_sound, framerate)
     time.sleep(duration)
 
 def save_sound(image, duration, outfile):
+    """Saves sound to specified output file.
+
+    Arguments:
+    image -- array of image brightness values (2d numpy.ndarray)
+    duration -- duration in seconds of the sound (float)
+    outfile -- location of output file for sound
+    """
     image_sound,framerate = _calc_sound_and_framerate(image, duration)
 
     wavfile.write(outfile, framerate, image_sound)
