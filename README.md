@@ -15,7 +15,6 @@ Right now the math is about as basic as it gets. Ideally I would like to clean u
 - scipy
 - imageio
 - sounddevice
-- argparse
 
 Indeed, much of the meat of this program is handled in these dependencies.
 

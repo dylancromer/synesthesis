@@ -49,5 +49,6 @@ def save_sound(image, duration, outfile):
     outfile -- location of output file for sound
     """
     image_sound,framerate = _calc_sound_and_framerate(image, duration)
+    framerate = int(framerate)
 
     wavfile.write(outfile, framerate, image_sound)
