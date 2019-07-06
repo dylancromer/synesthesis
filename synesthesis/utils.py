@@ -1,6 +1,9 @@
 import imageio as imio
 import numpy as np
 
+
+
+
 def load_image_file(image_file_location, invert):
     """Loads image from file location, can optionally invert image brightness levels.
 
@@ -22,6 +25,7 @@ def load_image_file(image_file_location, invert):
         image_blackwhite = 255 - image_blackwhite
 
     return image_blackwhite
+
 
 def _save_image(image, outfile):
     """Saves image to desired outfile. Thin wrapper around imageio imwrite."""

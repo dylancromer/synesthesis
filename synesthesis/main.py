@@ -4,8 +4,12 @@ import argparse
 from synesthesis.utils import load_image_file
 from synesthesis.sound import play_sound, save_sound
 
+
+
+
 class NoOutfile():
     pass
+
 
 def main():
     """Convert image to sound file via inverse short-time Fourier transform, then play or save the resulting waveform.
@@ -34,6 +38,7 @@ def main():
         play_sound(image, args.duration)
     else:
         save_sound(image, args.duration, args.outfile)
+
 
 if __name__ == '__main__':
     main()
