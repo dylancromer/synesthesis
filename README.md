@@ -14,7 +14,7 @@ Right now the math is about as basic as it gets. Ideally I would like to clean u
 - numpy
 - scipy
 - imageio
-- sounddevice
+- sounddevice (Note this provides bindings for PortAudio, so PortAudio itself is required separately as well)
 
 Indeed, much of the meat of this program is handled in these dependencies.
 
