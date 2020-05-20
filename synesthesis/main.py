@@ -32,9 +32,9 @@ def main():
 
     parser.add_argument('-s', '--sound-mode', help='treat input as sound, output image', action='store_true')
     parser.add_argument('-sf', '--sound-format', help='format of the input sound file')
-    parser.add_argument('-wl', '--window-length', help='length of the window function to be used for stft', default=280)
-    parser.add_argument('-ol', '--overlap-length', help='length of the overlap between windows', default=None)
-    parser.add_argument('-smooth', '--smoothing_factor', help='length of Gaussian window to use for convolutional smoothing', default=0)
+    parser.add_argument('-wl', '--window-length', help='length of the window function to be used for stft', default=280, type=int)
+    parser.add_argument('-ol', '--overlap-length', help='length of the overlap between windows', default=None, type=int)
+    parser.add_argument('-smooth', '--smoothing_factor', help='length of Gaussian window to use for convolutional smoothing', default=0, type=float)
     args = parser.parse_args()
 
 

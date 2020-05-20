@@ -38,3 +38,14 @@ def _save_image(image, outfile):
     '''Saves image to desired outfile. Thin wrapper around imageio imwrite.'''
     imio.imwrite(outfile, image)
     print('Saved image!')
+
+
+def atleast_kd(array, k, append_dims=True):
+    array = np.asarray(array)
+
+    if append_dims:
+        new_shape = array.shape + (1,) * (k-array.ndim)
+    else:
+        new_shape = (1,) * (k-array.ndim) + array.shape
+
+    return array.reshape(new_shape)

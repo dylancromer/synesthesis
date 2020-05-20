@@ -14,16 +14,31 @@ sns.set(
 from jupyterthemes import jtplot
 jtplot.style(theme='oceans16')
 jtplot.style(context='notebook', fscale=1, spines=False, gridlines='--')
+BGD = '#212430'
+style_dict = {
+    'figure.edgecolor': BGD,
+    'figure.facecolor': BGD,
+    'axes.facecolor': BGD,
+    'axes.edgecolor': BGD,
+    'grid.color': BGD,
+    'patch.edgecolor': BGD,
+    'patch.facecolor': BGD,
+    'savefig.facecolor': BGD,
+    'savefig.edgecolor': BGD,
+}
+matplotlib.rcParams.update(style_dict)
 from mpl_toolkits import mplot3d
 import numpy as np
 import scipy.signal as signal
+from synesthesis.utils import atleast_kd
 
 
 PLOT_BACKGROUND_COLOR = (33/255, 36/255, 48/255, 1)
 COLOR = '#f7685d'
 ALPHA = 0.4
-ELEV = 30
-AZIM = 120
+ELEV = None
+AZIM = 45
+NUM_WIRES = 100
 
 
 def _calc_stft(sampling_rate, sound_array, window_length, overlap_length):
@@ -35,22 +50,27 @@ def _transform_stft(stft):
     return np.log(power_spectrum + 1)
 
 
-def _smooth(array, smoothing_factor):
+def _smooth(array, smoothing_factor, window_length):
     sigma = smoothing_factor*window_length/100
     window = signal.get_window(('gaussian', sigma), window_length/2)
-    return signal.convolve(transform, window, mode='same')
+    window = window[:, None] * window[None, :]
+    window = np.swapaxes(atleast_kd(window, array.ndim, append_dims=False), 0, 1)
+    return signal.convolve(array, window, mode='same')
 
 
 def _plot_spectrum(times, freqs, spectrum, outfile):
     X, Y = np.meshgrid(times, freqs)
     ax = plt.axes(projection='3d')
-    ax.plot_wireframe(X, Y, spectrum, color=COLOR, alpha=ALPHA)
-    ax.view_init(elev=ELEV, azim=AZIM)
+    ax.plot_wireframe(X, Y, spectrum, color=COLOR, alpha=ALPHA, rcount=NUM_WIRES, ccount=NUM_WIRES)
     ax.w_xaxis.set_pane_color(PLOT_BACKGROUND_COLOR)
     ax.w_yaxis.set_pane_color(PLOT_BACKGROUND_COLOR)
     ax.w_zaxis.set_pane_color(PLOT_BACKGROUND_COLOR)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
     ax.grid(None)
-    plt.savefig(outfile, bbox_inches='tight')
+    ax.view_init(elev=ELEV, azim=AZIM)
+    plt.savefig(outfile, bbox_inches='tight', facecolor=PLOT_BACKGROUND_COLOR, edgecolor=PLOT_BACKGROUND_COLOR)
 
 
 def save_image(sampling_rate, sound_array, window_length, overlap_length, smoothing_factor, outfile):
