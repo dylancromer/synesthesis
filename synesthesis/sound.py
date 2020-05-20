@@ -35,7 +35,7 @@ def play_sound(image, duration):
     duration -- duration in seconds of the sound (float)
     """
 
-    image_sound,framerate = _calc_sound_and_framerate(image, duration)
+    image_sound, framerate = _calc_sound_and_framerate(image, duration)
 
     sd.play(image_sound, framerate)
     time.sleep(duration)
@@ -48,7 +48,7 @@ def save_sound(image, duration, outfile):
     duration -- duration in seconds of the sound (float)
     outfile -- location of output file for sound
     """
-    image_sound,framerate = _calc_sound_and_framerate(image, duration)
+    image_sound, framerate = _calc_sound_and_framerate(image, duration)
     framerate = int(framerate)
 
     wavfile.write(outfile, framerate, image_sound)
