@@ -69,7 +69,14 @@ def main():
         sampling_rate, sound = load_sound_file(args.input_file_loc, args.sound_format)
 
         if not isinstance(args.outfile, NoOutfile):
-            save_animation(sampling_rate, sound, args.window_length, args.overlap_length, args.smoothing_factor, args.outfile)
+            save_animation(
+                sampling_rate,
+                sound,
+                args.window_length,
+                args.overlap_length,
+                args.smoothing_factor,
+                args.outfile,
+            )
         else:
             raise ValueError('sound mode requires an output file to be specified')
 

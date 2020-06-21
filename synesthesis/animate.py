@@ -1,7 +1,6 @@
+from dataclasses import dataclass
 import numpy as np
 import matplotlib
-matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.unicode'] = True
 matplotlib.rcParams['figure.dpi'] = 150
 import matplotlib.pyplot as plt
 matplotlib.rcParams.update({'figure.autolayout': True})
@@ -33,6 +32,8 @@ from matplotlib import animation
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Source Code Pro']
 from matplotlib.patches import FancyArrowPatch
+import warnings
+warnings.filterwarnings('ignore')
 
 
 class Arrow3D(FancyArrowPatch):
@@ -63,7 +64,8 @@ setattr(mplot3d.Axes3D, 'arrow3D', _arrow3D)
 
 color_vals = (33//1.2, 36//1.2, 48//1.2)
 PLOT_BACKGROUND_COLOR = (color_vals[0]/255, color_vals[1]/255, color_vals[2]/255, 1)
-COLOR = '#46a5ce'
+COLOR = '#3587a8'
+PLAYHEAD_COLOR = '#5ebc9b'
 ALPHA = 0.4
 ELEV = None
 AZIM = 45
@@ -73,10 +75,26 @@ VIDEO_DPI = 300
 DELAY_SECONDS = 3
 DELAY_FRAMES = int(DELAY_SECONDS*60)
 FRAMES_PER_DEGREE = 2
-NUM_FRAMES = FRAMES_PER_DEGREE*360 + DELAY_FRAMES #one frame per 1/FRAMES_PER_DEGREE degree rotation
+ANIM_FRAMES = FRAMES_PER_DEGREE*360
+NUM_FRAMES = ANIM_FRAMES + DELAY_FRAMES
+ANIM_DURATION = ANIM_FRAMES/FRAMERATE
 
 
-def animate_spectrum(times, freqs, spectrum, outfile):
+def current_playback_time(frame):
+    return (frame/ANIM_FRAMES) * ANIM_DURATION
+
+
+class EmptyLine:
+    def remove(self):
+        pass
+
+
+@dataclass
+class LineHolder:
+    lines: object
+
+
+def animate_spectrum(times, freqs, spectrum, spectrum_interpolator, outfile):
     fig = plt.figure()
     X, Y = np.meshgrid(freqs, times)
     ax = mplot3d.Axes3D(fig)
@@ -118,7 +136,10 @@ def animate_spectrum(times, freqs, spectrum, outfile):
         ax.grid(None)
         return fig,
 
-    def animate(i):
+    def spectrum_at_arbitrary_time(time):
+        return spectrum_interpolator(freqs, time)
+
+    def animate(i, current_line_artist):
         if i < DELAY_FRAMES:
             return fig,
         else:
@@ -127,9 +148,31 @@ def animate_spectrum(times, freqs, spectrum, outfile):
             ax.set_ylabel('')
             ax.set_zlabel('')
             ax.view_init(elev=ELEV, azim=AZIM+j/FRAMES_PER_DEGREE)
+
+            try:
+                for l in current_line_artist.lines:
+                    l.remove()
+            except ValueError:
+                pass
+
+            playback_time = current_playback_time(j)
+            sound_duration = times.max()
+            sound_time = playback_time % sound_duration
+            if (sound_duration - sound_time) < (ANIM_DURATION - playback_time):
+                current_line_artist.lines = ax.plot(
+                    freqs,
+                    np.ones_like(freqs)*sound_time,
+                    1.01*spectrum_at_arbitrary_time(sound_time),
+                    color=PLAYHEAD_COLOR,
+                    alpha=0.9,
+                    linewidth=8,
+                    zorder=400,
+                )
             return fig,
 
-    anim = animation.FuncAnimation(fig, animate, init_func=init,
+    current_line_artist = LineHolder([EmptyLine()])
+
+    anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(current_line_artist,),
                                    frames=NUM_FRAMES, interval=20, blit=True)
 
     anim.save(outfile, dpi=VIDEO_DPI, fps=FRAMERATE, bitrate=-1, extra_args=['-vcodec', 'libx264'])

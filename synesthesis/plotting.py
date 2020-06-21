@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib
-matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.unicode'] = True
 matplotlib.rcParams['figure.dpi'] = 150
 import matplotlib.pyplot as plt
 matplotlib.rcParams.update({'figure.autolayout': True})
